@@ -6,7 +6,7 @@ from django.views import generic
 from django.utils import timezone
 from django.template import loader
 
-# from .models import ...
+from .models import Category, Choice
 
 # Create your views here.
 
@@ -16,3 +16,9 @@ def index(request):
         "message": "Hello!"
     }
     return HttpResponse(template.render(context, request))
+
+
+def preferences(request):
+    categories = Category.objects.all
+    return render(request, 'recipefinder/preferences.html', {'categories': categories})
+

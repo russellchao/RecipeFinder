@@ -2,7 +2,8 @@ from django.urls import path
 
 from . import views
 
-appname = "recipefinder"
+app_name = "recipefinder"
 urlpatterns = [
     path("", views.index, name="index"),
+    path("preferences/", views.preferences, name="preferences"),
 ]

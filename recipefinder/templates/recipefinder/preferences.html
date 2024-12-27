@@ -1,0 +1,49 @@
+<h1>{{ "Preference Selection" }}</h1>
+
+{% for category in categories %}
+<fieldset>
+    <legend><h2>{{ category.category_text }}</h2></legend>
+
+    <!-- Buttons for Select/Deselect All for this category -->
+    <button type="button" class="select_all" data_category="{{ forloop.counter }}">Select All</button>
+    <button type="button" class="deselect_all" data_category="{{ forloop.counter }}">Deselect All</button>
+
+    <div class="category_container" data_category="{{ forloop.counter }}">
+        {% for choice in category.choice_set.all %}
+            <input 
+                type="checkbox" 
+                name="choice{{ forloop.parentloop.counter }}" 
+                id="choice{{ forloop.counter }}" 
+                value="{{ choice.id }}"
+                class="selectable_checkbox"
+                data_category="{{ forloop.parentloop.counter }}">
+            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+        {% endfor %}
+    </div>
+</fieldset>
+{% endfor %}
+
+
+<script>
+    // Function to handle "Select All" for a specific category
+    document.querySelectorAll(".select_all").forEach(button => {
+        button.addEventListener("click", function () {
+            const category = this.dataset.category; // Get the category indentifier
+            document.querySelectorAll(".selectable_checkbox[data_category='${category}']").forEach(checkbox =>  {
+                checkbox.checked = true; // Select all choices in this category
+            });
+        });
+    });
+
+
+    // Function to handle "Deselect All" for a specific category
+    document.querySelectorAll(".deselect_all").forEach(button => {
+        button.addEventListener("click", function () {
+            const category = this.dataset.category; // Get the category indentifier
+            document.querySelectorAll(".selectable_checkbox[data_category='${category}']").forEach(checkbox =>  {
+                checkbox.checked = false; // Select all choices in this category
+            });
+        });
+    });
+
+</script>
