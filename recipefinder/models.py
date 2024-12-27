@@ -2,10 +2,10 @@ from django.db import models
 
 
 class Category(models.Model):
-    question_text = models.CharField(max_length=15)
+    category_text = models.CharField(max_length=15)
 
     def __str__(self):
-        return self.question_text
+        return self.category_text
     
 
 class Choice(models.Model):
