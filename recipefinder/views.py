@@ -8,6 +8,10 @@ from django.template import loader
 
 from .models import Category, Choice
 
+import requests
+
+API_KEY = 'ef8163f9b5d64b61a449552724d38c15'
+
 # Create your views here.
 
 def index(request):
@@ -24,10 +28,7 @@ def preferences(request):
 
 
 def results(request):
-    # Change each Choice model's selected variable to True. 
-
     if request.method == "POST":
-        # Get the list of selected choice IDs from the POST data
         selected_choice_ids = request.POST.getlist("choices")
 
         # Reset all choices to not selected
@@ -36,9 +37,18 @@ def results(request):
         # Update only the selected choices
         Choice.objects.filter(id__in=selected_choice_ids).update(selected=True)
 
-    # Fetch the updated selected choices to display
-    selected_choices = Choice.objects.filter(selected=True)
-    return render(request, "recipefinder/results.html", {"selected_choices": selected_choices})
+        # Gather the selected preferences
+        selected_choices = Choice.objects.filter(selected=True)
+        ingredients = ",".join([choice.choice_text for choice in selected_choices])
+
+        # Call the Spoonacular API
+        url = f"https://api.spoonacular.com/recipes/findByIngredients?ingredients={ingredients}&number=5&apiKey={API_KEY}"
+        response = requests.get(url)
+        recipes = response.json() if response.status_code == 200 else []
+
+        return render(request, "recipefinder/results.html", {"recipes": recipes})
+
+    return render(request, "recipefinder/results.html", {"recipes": []})
 
 
 

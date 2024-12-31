@@ -1,12 +1,15 @@
-<h1>{{ "Results" }}</h1>
+<h1>{{ "Recipes Based on Your Preferences" }}</h1>
 
-{% if selected_choices %}
-    <h2>Your Selected Preferences:</h2>
+{% if recipes %}
     <ul>
-        {% for choice in selected_choices %}
-            <li>{{ choice.choice_text }} (Category: {{ choice.category.category_text }})</li>
+        {% for recipe in recipes %}
+            <li>
+                <h2>{{ recipe.title }}</h2>
+                <img src="{{ recipe.image }}" alt="{{ recipe.title }}" style="width: 200px;">
+                <p><a href="https://spoonacular.com/recipes/{{ recipe.title | slugify }}-{{ recipe.id }}"> View Recipe </a></p>
+            </li>
         {% endfor %}
     </ul>
 {% else %}
-    <p>No preferences were selected.</p>
+    <p> No recipes found. Please ensure you entered valid preferences. </p>
 {% endif %}
