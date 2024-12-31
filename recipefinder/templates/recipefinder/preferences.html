@@ -1,27 +1,43 @@
 <h1>{{ "Preference Selection" }}</h1>
 
-{% for category in categories %}
-<fieldset>
-    <legend><h2>{{ category.category_text }}</h2></legend>
 
-    <!-- Buttons for Select/Deselect All for this category -->
-    <button type="button" class="select_all" data_category="{{ forloop.counter }}">Select All</button>
-    <button type="button" class="deselect_all" data_category="{{ forloop.counter }}">Deselect All</button>
+<form method="post" action="{% url 'recipefinder:results' %}">
+    {% csrf_token %}
+    {% for category in categories %}
+    <fieldset>
+        <legend><h2>{{ category.category_text }}</h2></legend>
 
-    <div class="category_container" data_category="{{ forloop.counter }}">
-        {% for choice in category.choice_set.all %}
-            <input 
-                type="checkbox" 
-                name="choice{{ forloop.parentloop.counter }}" 
-                id="choice{{ forloop.counter }}" 
-                value="{{ choice.id }}"
-                class="selectable_checkbox"
-                data_category="{{ forloop.parentloop.counter }}">
-            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-        {% endfor %}
-    </div>
-</fieldset>
-{% endfor %}
+        <div class="category_container" data_category="{{ forloop.counter }}">
+            {% for choice in category.choice_set.all %}
+                <input 
+                    type="checkbox" 
+                    name="choices" 
+
+                    value="{{ choice.id }}"
+                    {% if choice.selected %} checked {% endif %}
+                    class="selectable_checkbox"
+                    data_category="{{ forloop.parentloop.counter }}">
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            {% endfor %}
+        </div>
+
+        <p>&nbsp;</p>
+
+        <!-- Buttons for Select/Deselect All for this category -->
+        <button type="button" class="select_all" data_category="{{ forloop.counter }}">Select All</button>
+        <button type="button" class="deselect_all" data_category="{{ forloop.counter }}">Deselect All</button>
+
+    </fieldset>
+    {% endfor %}
+
+    <p>&nbsp;</p>
+    
+    <button type="submit">Find Recipes</button>
+    
+</form>
+
+
+<!-- IGNORE THE SELECT/DESELECT ALL FUNCTIONALITY FOR NOW -->
 
 
 <script>
