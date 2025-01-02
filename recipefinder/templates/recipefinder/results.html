@@ -6,6 +6,18 @@
             <li>
                 <h2>{{ recipe.title }}</h2>
                 <img src="{{ recipe.image }}" alt="{{ recipe.title }}" style="width: 200px;">
+                {% if recipe.nutrition %}
+                    <p>
+                        <strong>Fat Content:</strong>
+                        {% for nutrient in recipe.nutrition.nutrients %}
+                            {% if nutrient.name == "Fat" %}
+                                {{ nutrient.amount }} {{ nutrient.unit }}
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                {% else %}
+                    <p><em>Nutritional data not available.</em></p>
+                {% endif %}
                 <p><a href="https://spoonacular.com/recipes/{{ recipe.title | slugify }}-{{ recipe.id }}"> View Recipe </a></p>
             </li>
         {% endfor %}

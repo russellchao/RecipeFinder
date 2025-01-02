@@ -7,17 +7,29 @@
     <fieldset>
         <legend><h2>{{ category.category_text }}</h2></legend>
 
-        <div class="category_container" data_category="{{ forloop.counter }}">
+        <!-- Create a flex container for columns -->
+        <div class="checkbox_container">
             {% for choice in category.choice_set.all %}
-                <input 
-                    type="checkbox" 
-                    name="choices" 
+                {% if forloop.counter0|divisibleby:3 %}
+                <!-- Start a new column every 3 items -->
+                <div class="checkbox_column">
+                {% endif %}
 
-                    value="{{ choice.id }}"
-                    {% if choice.selected %} checked {% endif %}
-                    class="selectable_checkbox"
-                    data_category="{{ forloop.parentloop.counter }}">
-                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+                <!-- Checkbox item -->
+                <div class="checkbox_items">
+                    <input 
+                        type="checkbox" 
+                        name="choices" 
+                        value="{{ choice.id }}"
+                        {% if choice.selected %} checked {% endif %}
+                        id="choice{{ choice.id }}">
+                    <label for="choice{{ choice.id }}">{{ choice.choice_text }}</label><br>
+                </div>
+
+                {% if forloop.counter|divisibleby:3 or forloop.last %}
+                <!-- Close the column -->
+                </div>
+                {% endif %}
             {% endfor %}
         </div>
 
@@ -35,6 +47,22 @@
     <button type="submit">Find Recipes</button>
     
 </form>
+
+<style>
+    .checkbox_container {
+        display: flex; 
+        gap: 20px; 
+    }
+
+    .checkbox_column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .checkbox_item {
+        margin-bottom: 10px; 
+    }
+</style>
 
 
 <!-- IGNORE THE SELECT/DESELECT ALL FUNCTIONALITY FOR NOW -->
