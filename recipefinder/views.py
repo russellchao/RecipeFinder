@@ -38,8 +38,22 @@ def results(request):
                 choice_cat[category_name] = ""
             choice_cat[category_name] += choice.choice_text + ","
 
-        url = f"https://api.spoonacular.com/recipes/complexSearch?cuisine={choice_cat["Cuisine"]}&diet={choice_cat["Diet"]}&number=15&addRecipeNutrition=true&apiKey={API_KEY}"
-        response = requests.get(url)
+        # Build the API call URL
+        base_url = f"https://api.spoonacular.com/recipes/complexSearch?"
+        url_params = {
+            "number": 15,
+            "addRecipeNutrition": "true",
+            "apiKey": API_KEY,
+        }
+
+        # Dynamically add categories to the API call
+        allowed_parameters = ["cuisine", "diet", "intolerances", "includeIngredietns", "excludeIngredients", "type"]
+        for category_name, value in choice_cat.items():
+            if category_name.lower() in allowed_parameters and value: 
+                url_params[category_name.lower()] = value
+
+        # Call the API
+        response = requests.get(base_url, params=url_params)
         recipes = response.json().get('results', []) if response.status_code == 200 else []
 
         return render(request, "recipefinder/results.html", {"recipes": recipes})
