@@ -38,7 +38,7 @@ def results(request):
                 choice_cat[category_name] = ""
             choice_cat[category_name] += choice.choice_text + ","
 
-        url = f"https://api.spoonacular.com/recipes/complexSearch?cuisine={choice_cat["Cuisine"]}&number=15&addRecipeNutrition=true&apiKey={API_KEY}"
+        url = f"https://api.spoonacular.com/recipes/complexSearch?cuisine={choice_cat["Cuisine"]}&diet={choice_cat["Diet"]}&number=15&addRecipeNutrition=true&apiKey={API_KEY}"
         response = requests.get(url)
         recipes = response.json().get('results', []) if response.status_code == 200 else []
 
