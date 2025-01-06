@@ -3,40 +3,59 @@
 
 <form method="post" action="{% url 'recipefinder:results' %}">
     {% csrf_token %}
+
     {% for category in categories %}
-    <fieldset>
-        <legend><h2>{{ category.category_text }}</h2></legend>
+    {% if category.category_text != "Ingredients" and category.category_text != "Equipment" %}
+        <fieldset>
+            <legend><h2>{{ category.category_text }}</h2></legend>
 
-        <!-- Create a flex container for columns -->
-        <div class="checkbox_container">
-            {% for choice in category.choice_set.all %}
-                {% if forloop.counter0|divisibleby:3 %}
-                <!-- Start a new column every 3 items -->
-                <div class="checkbox_column">
-                {% endif %}
+            <!-- Create a flex container for columns -->
+            <div class="checkbox_container">
+                {% for choice in category.choice_set.all %}
+                    {% if forloop.counter0|divisibleby:3 %}
+                    <!-- Start a new column every 3 items -->
+                    <div class="checkbox_column">
+                    {% endif %}
 
-                <!-- Checkbox item -->
-                <div class="checkbox_items">
-                    <input 
-                        type="checkbox" 
-                        name="choices" 
-                        value="{{ choice.id }}"
-                        {% if choice.selected %} checked {% endif %}
-                        id="choice{{ choice.id }}">
-                    <label for="choice{{ choice.id }}">{{ choice.choice_text }}</label><br>
-                </div>
+                    <!-- Checkbox item -->
+                    <div class="checkbox_items">
+                        <input 
+                            type="checkbox" 
+                            name="choices" 
+                            value="{{ choice.id }}"
+                            {% if choice.selected %} checked {% endif %}
+                            id="choice{{ choice.id }}">
+                        <label for="choice{{ choice.id }}">{{ choice.choice_text }}</label><br>
+                    </div>
 
-                {% if forloop.counter|divisibleby:3 or forloop.last %}
-                <!-- Close the column -->
-                </div>
-                {% endif %}
-            {% endfor %}
-        </div>
+                    {% if forloop.counter|divisibleby:3 or forloop.last %}
+                    <!-- Close the column -->
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
 
-        <p>&nbsp;</p>
+            <p>&nbsp;</p>
 
-    </fieldset>
+        </fieldset>
+    {% endif %}
     {% endfor %}
+
+
+    <!-- Text inputs for dynamic parameters -->
+    <fieldset>
+        <legend><h2>Ingredients</h2></legend>
+        <label for="include-ingredients">Enter ingredients (must be comma-separated):</label>
+        <br><br>
+        <input type="text" id="include-ingredients" name="includeIngredients" placeholder="e.g., chicken, tomato, garlic" class="long_textbox">
+    </fieldset>
+
+
+    <!-- <fieldset>
+        <legend><h2>Equipment</h2></legend>
+        <label for="equipment">Enter required equipment (comma-separated):</label>
+        <input type="text" id="equipment" name="equipment" placeholder="e.g., blender, oven">
+    </fieldset>  -->
 
     <p>&nbsp;</p>
     
@@ -58,4 +77,11 @@
     .checkbox_item {
         margin-bottom: 10px; 
     }
+
+    .long_textbox {
+        width: 100%; /* You can also use a fixed value like 500px */
+        max-width: 600px; /* Optional: Set a max width */
+        padding: 5px;
+    }
 </style>
+

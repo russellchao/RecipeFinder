@@ -8,6 +8,7 @@ from django.template import loader
 
 from .models import Category, Choice
 
+import json
 import requests
 
 API_KEY = 'ef8163f9b5d64b61a449552724d38c15'
@@ -41,22 +42,49 @@ def results(request):
         # Build the API call URL
         base_url = f"https://api.spoonacular.com/recipes/complexSearch?"
         url_params = {
-            "number": 15,
+            "number": 100,
             "addRecipeNutrition": "true",
             "apiKey": API_KEY,
         }
 
-        # Dynamically add categories to the API call
-        allowed_parameters = ["cuisine", "diet", "intolerances", "includeIngredietns", "excludeIngredients", "type"]
+        # Dynamically handle textbox categories
+        textbox_parameters = ["includeIngredients", "equipment"]
+        for category_name in textbox_parameters:
+            user_input = request.POST.get(category_name, "").strip()
+            if user_input:
+                url_params[category_name] = user_input
+
+        # Dynamically handle checkbox categories
+        checkbox_parameters = ["cuisine", "diet", "intolerances", "type"]
         for category_name, value in choice_cat.items():
-            if category_name.lower() in allowed_parameters and value: 
+
+            # Special Cases
+            if category_name == "Meal Type": category_name = "type"
+
+            if category_name.lower() in checkbox_parameters and value: 
                 url_params[category_name.lower()] = value
 
         # Call the API
         response = requests.get(base_url, params=url_params)
-        recipes = response.json().get('results', []) if response.status_code == 200 else []
 
-        return render(request, "recipefinder/results.html", {"recipes": recipes})
+        # Extract recipe results
+        if response.status_code == 200:
+            recipeResults = response.json().get("results", [])
+
+            # print(recipeResults)
+
+            # Write results to results.json
+            try:
+                with open("results.json", "w") as file:
+                    json.dump(recipeResults, file, indent=4)  # Use indent=4 for pretty formatting
+                print("Results successfully written to results.json")
+            except Exception as e:
+                print("Error writing to results.json:", e)
+
+            return render(request, "recipefinder/results.html", {"recipes": recipeResults})
+        else:
+            print("API Error:", response.status_code, response.text)
+            return render(request, "recipefinder/results.html", {"recipes": []})
 
     return render(request, "recipefinder/results.html", {"recipes": []})
 
