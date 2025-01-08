@@ -74,12 +74,12 @@ def results(request):
             # print(recipeResults)
 
             # Write results to results.json
-            try:
-                with open("results.json", "w") as file:
-                    json.dump(recipeResults, file, indent=4)  # Use indent=4 for pretty formatting
-                print("Results successfully written to results.json")
-            except Exception as e:
-                print("Error writing to results.json:", e)
+            # try:
+            #     with open("results.json", "w") as file:
+            #         json.dump(recipeResults, file, indent=4)  # Use indent=4 for pretty formatting
+            #     print("Results successfully written to results.json")
+            # except Exception as e:
+            #     print("Error writing to results.json:", e)
 
             return render(request, "recipefinder/results.html", {"recipes": recipeResults})
         else:

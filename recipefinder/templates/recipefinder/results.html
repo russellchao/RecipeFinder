@@ -1,4 +1,4 @@
-<h1>{{ "Recipes Based on Your Preferences" }}</h1>
+<h1>{{ recipes|length }} Recipes Found</h1>
 
 {% if recipes %}
     <ul>
@@ -23,5 +23,5 @@
         {% endfor %}
     </ul>
 {% else %}
-    <p> No recipes found. Please ensure you entered valid preferences. </p>
+    <p> Please ensure you entered valid preferences. </p>
 {% endif %}
